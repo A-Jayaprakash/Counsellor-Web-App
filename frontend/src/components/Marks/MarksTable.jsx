@@ -11,7 +11,9 @@ import {
   TableRow,
   Chip,
   Box,
+  Divider,
 } from '@mui/material';
+import { School } from '@mui/icons-material';
 
 const gradeColors = {
   'A+': 'success',
@@ -30,55 +32,93 @@ const MarksTable = ({ subjects = [] }) => {
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
+    <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0' }}>
+      <CardContent sx={{ p: 4 }}>
+        <Typography variant="h5" fontWeight="700" gutterBottom sx={{ mb: 3 }}>
           Subject-wise Marks
         </Typography>
+        <Divider sx={{ mb: 3 }} />
 
         {subjects.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
-            No marks data available
-          </Typography>
+          <Box sx={{ textAlign: 'center', py: 6 }}>
+            <School sx={{ fontSize: 64, color: '#bdbdbd', mb: 2 }} />
+            <Typography variant="body1" color="text.secondary">
+              No marks data available
+            </Typography>
+          </Box>
         ) : (
           <TableContainer>
             <Table>
               <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell><strong>Subject</strong></TableCell>
-                  <TableCell align="center"><strong>Code</strong></TableCell>
-                  <TableCell align="center"><strong>Internal</strong></TableCell>
-                  <TableCell align="center"><strong>External</strong></TableCell>
-                  <TableCell align="center"><strong>Total</strong></TableCell>
-                  <TableCell align="center"><strong>Percentage</strong></TableCell>
-                  <TableCell align="center"><strong>Grade</strong></TableCell>
+                <TableRow sx={{ bgcolor: '#fafafa' }}>
+                  <TableCell sx={{ fontWeight: 700, fontSize: '0.95rem' }}>Subject</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    Code
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    Internal
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    External
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    Total
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    Percentage
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    Grade
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {subjects.map((subject, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>{subject.name}</TableCell>
+                  <TableRow
+                    key={index}
+                    hover
+                    sx={{
+                      '&:hover': { bgcolor: '#fafafa' },
+                      transition: 'background-color 0.2s',
+                    }}
+                  >
+                    <TableCell>
+                      <Typography variant="body1" fontWeight={600}>
+                        {subject.name}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="center">
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" fontWeight={500}>
                         {subject.code}
                       </Typography>
                     </TableCell>
-                    <TableCell align="center">{subject.internalMarks}</TableCell>
-                    <TableCell align="center">{subject.externalMarks}</TableCell>
                     <TableCell align="center">
-                      <strong>{subject.totalMarks}/{subject.maxMarks}</strong>
+                      <Typography variant="body1" fontWeight={600}>
+                        {subject.internalMarks}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body1" fontWeight={600}>
+                        {subject.externalMarks}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="body1" fontWeight={700}>
+                        {subject.totalMarks}/{subject.maxMarks}
+                      </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography
-                        variant="body2"
-                        fontWeight="bold"
-                        color={
-                          calculatePercentage(subject.totalMarks, subject.maxMarks) >= 75
-                            ? 'success.main'
-                            : calculatePercentage(subject.totalMarks, subject.maxMarks) >= 60
-                            ? 'warning.main'
-                            : 'error.main'
-                        }
+                        variant="body1"
+                        fontWeight={700}
+                        sx={{
+                          color:
+                            calculatePercentage(subject.totalMarks, subject.maxMarks) >= 75
+                              ? '#2e7d32'
+                              : calculatePercentage(subject.totalMarks, subject.maxMarks) >= 60
+                              ? '#ed6c02'
+                              : '#d32f2f',
+                        }}
                       >
                         {calculatePercentage(subject.totalMarks, subject.maxMarks)}%
                       </Typography>
@@ -87,7 +127,8 @@ const MarksTable = ({ subjects = [] }) => {
                       <Chip
                         label={subject.grade}
                         color={gradeColors[subject.grade] || 'default'}
-                        size="small"
+                        size="medium"
+                        sx={{ fontWeight: 700, minWidth: 50 }}
                       />
                     </TableCell>
                   </TableRow>

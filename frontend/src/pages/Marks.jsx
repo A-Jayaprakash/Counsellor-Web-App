@@ -15,8 +15,9 @@ import {
   AppBar,
   Toolbar,
   Divider,
+  Chip,
 } from '@mui/material';
-import { ArrowBack, Assessment, TrendingUp, School } from '@mui/icons-material';
+import { ArrowBack, Assessment, TrendingUp, School, CalendarToday } from '@mui/icons-material';
 import marksAPI from '../services/marksAPI';
 import MarksTable from '../components/Marks/MarksTable';
 
@@ -58,103 +59,127 @@ const Marks = () => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
+          bgcolor: '#f5f7fa',
         }}
       >
-        <CircularProgress />
+        <CircularProgress size={60} thickness={4} />
       </Box>
     );
   }
 
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f7fa' }}>
+      {/* AppBar */}
+      <AppBar position="static" elevation={0} sx={{ bgcolor: '#115293' }}>
+        <Toolbar sx={{ py: 1.5 }}>
+          <Button
+            color="inherit"
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/dashboard')}
+            sx={{
+              mr: 2,
+              borderRadius: 2,
+              px: 2,
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+            }}
+          >
             Back
           </Button>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2 }}>
+          <Assessment sx={{ mr: 2, fontSize: 28 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
             Academic Performance
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 5, mb: 6 }}>
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 4, borderRadius: 2 }}>
             {error}
           </Alert>
         )}
 
-        <Grid container spacing={3}>
-          {/* Summary Cards */}
+        <Grid container spacing={4}>
+          {/* GPA Card */}
           <Grid item xs={12} md={4}>
             <Card
+              elevation={0}
               sx={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 color: 'white',
+                borderRadius: 4,
+                height: '100%',
+                minHeight: 220,
+                border: '1px solid rgba(255,255,255,0.1)',
               }}
             >
-              <CardContent>
-                <Box sx={{ textAlign: 'center', py: 2 }}>
-                  <Assessment sx={{ fontSize: 50, mb: 2 }} />
-                  <Typography variant="h3" fontWeight="bold">
-                    {marksData?.gpa?.toFixed(2) || '0.00'}
-                  </Typography>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    Current GPA
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                    Semester {marksData?.semester || 1}
-                  </Typography>
-                </Box>
+              <CardContent sx={{ textAlign: 'center', py: 5 }}>
+                <Assessment sx={{ fontSize: 56, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h2" fontWeight="800" sx={{ mb: 1, fontSize: '3.5rem' }}>
+                  {marksData?.gpa?.toFixed(2) || '0.00'}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 600, opacity: 0.95, mb: 0.5 }}>
+                  Current GPA
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Semester {marksData?.semester || 1}
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
+          {/* CGPA Card */}
           <Grid item xs={12} md={4}>
             <Card
+              elevation={0}
               sx={{
                 background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                 color: 'white',
+                borderRadius: 4,
+                height: '100%',
+                minHeight: 220,
+                border: '1px solid rgba(255,255,255,0.1)',
               }}
             >
-              <CardContent>
-                <Box sx={{ textAlign: 'center', py: 2 }}>
-                  <TrendingUp sx={{ fontSize: 50, mb: 2 }} />
-                  <Typography variant="h3" fontWeight="bold">
-                    {marksData?.cgpa?.toFixed(2) || '0.00'}
-                  </Typography>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    Cumulative CGPA
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                    Overall Performance
-                  </Typography>
-                </Box>
+              <CardContent sx={{ textAlign: 'center', py: 5 }}>
+                <TrendingUp sx={{ fontSize: 56, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h2" fontWeight="800" sx={{ mb: 1, fontSize: '3.5rem' }}>
+                  {marksData?.cgpa?.toFixed(2) || '0.00'}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 600, opacity: 0.95, mb: 0.5 }}>
+                  Cumulative CGPA
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Overall Performance
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
+          {/* Subjects Card */}
           <Grid item xs={12} md={4}>
             <Card
+              elevation={0}
               sx={{
                 background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                 color: 'white',
+                borderRadius: 4,
+                height: '100%',
+                minHeight: 220,
+                border: '1px solid rgba(255,255,255,0.1)',
               }}
             >
-              <CardContent>
-                <Box sx={{ textAlign: 'center', py: 2 }}>
-                  <School sx={{ fontSize: 50, mb: 2 }} />
-                  <Typography variant="h3" fontWeight="bold">
-                    {marksData?.subjects?.length || 0}
-                  </Typography>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    Total Subjects
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                    Current Semester
-                  </Typography>
-                </Box>
+              <CardContent sx={{ textAlign: 'center', py: 5 }}>
+                <School sx={{ fontSize: 56, mb: 2, opacity: 0.9 }} />
+                <Typography variant="h2" fontWeight="800" sx={{ mb: 1, fontSize: '3.5rem' }}>
+                  {marksData?.subjects?.length || 0}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 600, opacity: 0.95, mb: 0.5 }}>
+                  Total Subjects
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Current Semester
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -167,16 +192,35 @@ const Marks = () => {
           {/* Last Updated */}
           {marksData?.lastUpdated && (
             <Grid item xs={12}>
-              <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'grey.50' }}>
-                <Typography variant="body2" color="text.secondary">
-                  Last Updated: {new Date(marksData.lastUpdated).toLocaleString()}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  textAlign: 'center',
+                  bgcolor: '#fafafa',
+                  borderRadius: 3,
+                  border: '1px solid #e0e0e0',
+                }}
+              >
+                <CalendarToday sx={{ fontSize: 24, color: '#616161', mb: 1 }} />
+                <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                  Last Updated
+                </Typography>
+                <Typography variant="h6" fontWeight="700" sx={{ mt: 0.5 }}>
+                  {new Date(marksData.lastUpdated).toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </Typography>
               </Paper>
             </Grid>
           )}
         </Grid>
       </Container>
-    </>
+    </Box>
   );
 };
 
