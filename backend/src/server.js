@@ -8,6 +8,7 @@ const userRoutes = require("./routes/user");
 const dashboardRoutes = require("./routes/dashboard");
 const ondutyRoutes = require("./routes/onduty");
 const adminRoutes = require("./routes/admin");
+const attendanceRoutes = require("./routes/attendance");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/onduty", ondutyRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 // Basic route for testing
 app.get("/", (req, res) => {
