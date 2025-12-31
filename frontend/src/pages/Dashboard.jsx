@@ -221,75 +221,75 @@ const Dashboard = () => {
           <Grid item xs={12} md={8}>
             <AnnouncementsList announcements={announcements} />
           </Grid>
-
           {/* Quick Actions */}
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, height: '100%' }}>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Quick Actions
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                {user?.role === 'student' && (
-                  <>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<School />}
-                      onClick={() => navigate('/attendance')}
-                    >
-                      View Attendance
-                    </Button>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<Assessment />}
-                      onClick={() => navigate('/marks')}
-                    >
-                      View Marks
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      startIcon={<EventNote />}
-                      onClick={() => navigate('/od-requests')}
-                    >
-                      OD Requests
-                    </Button>
-                  </>
-                )}
-                {user?.role === 'counsellor' && (
-                  <>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<School />}
-                      onClick={() => navigate('/students')}
-                    >
-                      View Students
-                    </Button>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      startIcon={<EventNote />}
-                      onClick={() => navigate('/od-requests')}
-                    >
-                      OD Requests
-                    </Button>
-                  </>
-                )}
-                {user?.role === 'admin' && (
-                  <>
-                    <Button variant="contained" fullWidth startIcon={<School />}>
-                      Manage Users
-                    </Button>
-                    <Button variant="contained" fullWidth startIcon={<EventNote />}>
-                      Create Announcement
-                    </Button>
-                  </>
-                )}
-              </Box>
-            </Paper>
-          </Grid>
+<Grid item xs={12} md={4}>
+  <Paper sx={{ p: 3, height: '100%' }}>
+    <Typography variant="h6" fontWeight="bold" gutterBottom>
+      Quick Actions
+    </Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+      {user?.role === 'student' && (
+        <>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<School />}
+            onClick={() => navigate('/attendance')}
+          >
+            View Attendance
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<Assessment />}
+            onClick={() => navigate('/marks')}
+          >
+            View Marks
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<EventNote />}
+            onClick={() => navigate('/od-requests')}
+          >
+            OD Requests
+          </Button>
+        </>
+      )}
+      {user?.role === 'counsellor' && (
+        <>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<School />}
+            onClick={() => navigate('/students')}
+          >
+            View Students
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<EventNote />}
+            onClick={() => navigate('/od-requests')}
+          >
+            OD Requests
+          </Button>
+        </>
+      )}
+      {user?.role === 'admin' && (
+        <>
+          <Button variant="contained" fullWidth startIcon={<School />}>
+            Manage Users
+          </Button>
+          <Button variant="contained" fullWidth startIcon={<EventNote />}>
+            Create Announcement
+          </Button>
+        </>
+      )}
+    </Box>
+  </Paper>
+</Grid>
+
         </Grid>
       </Container>
     </>

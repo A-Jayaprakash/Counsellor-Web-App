@@ -12,7 +12,9 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Attendance from "./pages/Attendance";
 import ODRequests from "./pages/ODRequests";
+import Marks from "./pages/Marks";
 import "./App.css";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/od-requests" element={<ODRequests />} />
+            <Route path="/marks" element={<Marks />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </Router>

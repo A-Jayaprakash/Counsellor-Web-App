@@ -9,6 +9,7 @@ const dashboardRoutes = require("./routes/dashboard");
 const odRequestRoutes = require("./routes/odRequest");
 const adminRoutes = require("./routes/admin");
 const attendanceRoutes = require("./routes/attendance");
+const marksRoutes = require("./routes/marks");
 
 const app = express();
 
@@ -26,7 +27,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/od-requests", odRequestRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/attendance", attendanceRoutes);
-
+app.use("/api/marks", marksRoutes);
 // Basic route for testing
 app.get("/", (req, res) => {
   res.json({
