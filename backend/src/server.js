@@ -6,7 +6,7 @@ const redisClient = require("./config/redis");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const dashboardRoutes = require("./routes/dashboard");
-const ondutyRoutes = require("./routes/onduty");
+const odRequestRoutes = require("./routes/odRequest");
 const adminRoutes = require("./routes/admin");
 const attendanceRoutes = require("./routes/attendance");
 
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/onduty", ondutyRoutes);
+app.use("/api/od-requests", odRequestRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/attendance", attendanceRoutes);
 
