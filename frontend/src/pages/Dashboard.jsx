@@ -21,7 +21,7 @@ import {
   PendingActions,
   Logout as LogoutIcon,
 } from '@mui/icons-material';
-import { logout } from '../redux/slices/authSlice';
+import { logout, rehydrateAuth } from '../redux/slices/authSlice';
 import dashboardAPI from '../services/dashboardAPI';
 import StatsCard from '../components/Dashboard/StatsCard';
 import AnnouncementsList from '../components/Dashboard/AnnouncementsList';
@@ -30,6 +30,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+  
+  useEffect(() => {
+    if (!user && isAuthenticated) {
+      dispatch(rehydrateAuth());
+    }
+  }, [user, isAuthenticated, dispatch]);
 
   const [stats, setStats] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
