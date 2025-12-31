@@ -7,15 +7,18 @@ import {
   IconButton,
   Chip,
   Divider,
+  Button,
 } from '@mui/material';
-import { Edit, Delete, Visibility } from '@mui/icons-material';
+import { Edit, Delete, Visibility, CheckCircle, Cancel } from '@mui/icons-material';
 import { format } from 'date-fns';
 import StatusBadge from './StatusBadge';
 
-const ODRequestCard = ({ odRequest, onView, onEdit, onDelete, userRole }) => {
+const ODRequestCard = ({ odRequest, onView, onEdit, onDelete, onApprove, userRole }) => {
   const isStudent = userRole === 'student';
+  const isCounsellor = userRole === 'counsellor';
   const isPending = odRequest.status === 'pending';
   const canEdit = isStudent && isPending;
+  const canApprove = isCounsellor && isPending;
 
   const daysDiff = Math.ceil(
     (new Date(odRequest.endDate) - new Date(odRequest.startDate)) / (1000 * 60 * 60 * 24)
@@ -60,7 +63,7 @@ const ODRequestCard = ({ odRequest, onView, onEdit, onDelete, userRole }) => {
 
         <Divider sx={{ my: 1.5 }} />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box>
             <Typography variant="caption" color="text.secondary" display="block">
               From
@@ -89,6 +92,32 @@ const ODRequestCard = ({ odRequest, onView, onEdit, onDelete, userRole }) => {
             </Typography>
           </Box>
         </Box>
+
+        {/* Action Buttons for Counsellors */}
+        {canApprove && (
+          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              fullWidth
+              startIcon={<CheckCircle />}
+              onClick={() => onApprove(odRequest)}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              size="small"
+              fullWidth
+              startIcon={<Cancel />}
+              onClick={() => onApprove(odRequest)} // Opens dialog in reject mode
+            >
+              Reject
+            </Button>
+          </Box>
+        )}
 
         {odRequest.counsellorRemarks && (
           <Box sx={{ mt: 2, p: 1.5, bgcolor: 'grey.100', borderRadius: 1 }}>

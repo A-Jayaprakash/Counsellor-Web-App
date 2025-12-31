@@ -16,11 +16,12 @@ import {
   Paper,
   Chip,
 } from '@mui/material';
-import { ArrowBack, Add, FilterList } from '@mui/icons-material';
+import { ArrowBack, Add } from '@mui/icons-material';
 import odRequestAPI from '../services/odRequestAPI';
 import ODRequestCard from '../components/ODRequest/ODRequestCard';
 import ODRequestForm from '../components/ODRequest/ODRequestForm';
 import ODDetailsDialog from '../components/ODRequest/ODDetailsDialog';
+import ApprovalDialog from '../components/ODRequest/ApprovalDialog';
 
 const ODRequests = () => {
   const navigate = useNavigate();
@@ -35,9 +36,11 @@ const ODRequests = () => {
   const [currentTab, setCurrentTab] = useState('all');
   const [formOpen, setFormOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [approvalOpen, setApprovalOpen] = useState(false);
   const [selectedOD, setSelectedOD] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
 
   useEffect(() => {
     fetchODRequests();
@@ -90,6 +93,11 @@ const ODRequests = () => {
     setDetailsOpen(true);
   };
 
+  const handleApprovalClick = (odRequest) => {
+    setSelectedOD(odRequest);
+    setApprovalOpen(true);
+  };
+
   const handleFormSubmit = async (formData) => {
     try {
       setFormLoading(true);
@@ -106,6 +114,34 @@ const ODRequests = () => {
       setError(err.response?.data?.message || 'Operation failed');
     } finally {
       setFormLoading(false);
+    }
+  };
+
+  const handleApprove = async (id, remarks) => {
+    try {
+      setApprovalLoading(true);
+      await odRequestAPI.approveODRequest(id, remarks);
+      setSuccess('OD request approved successfully');
+      setApprovalOpen(false);
+      fetchODRequests();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Approval failed');
+    } finally {
+      setApprovalLoading(false);
+    }
+  };
+
+  const handleReject = async (id, remarks) => {
+    try {
+      setApprovalLoading(true);
+      await odRequestAPI.rejectODRequest(id, remarks);
+      setSuccess('OD request rejected');
+      setApprovalOpen(false);
+      fetchODRequests();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Rejection failed');
+    } finally {
+      setApprovalLoading(false);
     }
   };
 
@@ -222,6 +258,7 @@ const ODRequests = () => {
                 onView={handleViewClick}
                 onEdit={handleEditClick}
                 onDelete={handleDelete}
+                onApprove={handleApprovalClick}
                 userRole={user?.role}
               />
             ))}
@@ -252,6 +289,15 @@ const ODRequests = () => {
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         odRequest={selectedOD}
+      />
+
+      <ApprovalDialog
+        open={approvalOpen}
+        onClose={() => setApprovalOpen(false)}
+        odRequest={selectedOD}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        loading={approvalLoading}
       />
     </>
   );
