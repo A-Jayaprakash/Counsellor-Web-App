@@ -23,18 +23,35 @@ const onDutyRequestSchema = new mongoose.Schema(
     reason: {
       type: String,
       required: true,
+      maxlength: 500,
     },
-    documents: [String],
+    documents: [
+      {
+        filename: String,
+        url: String,
+        uploadedAt: Date,
+      },
+    ],
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
-    counsellorRemarks: String,
+    counsellorRemarks: {
+      type: String,
+      maxlength: 500,
+    },
     approvedAt: Date,
     rejectedAt: Date,
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
+
+// Index for faster queries
+onDutyRequestSchema.index({ studentId: 1, status: 1 });
+onDutyRequestSchema.index({ counsellorId: 1, status: 1 });
+onDutyRequestSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("OnDutyRequest", onDutyRequestSchema);

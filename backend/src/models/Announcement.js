@@ -1,40 +1,53 @@
 const mongoose = require("mongoose");
 
-const onDutyRequestSchema = new mongoose.Schema(
+const announcementSchema = new mongoose.Schema(
   {
-    studentId: {
+    adminId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    counsellorId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    startDate: {
-      type: Date,
-      required: true,
-    },
-    endDate: {
-      type: Date,
-      required: true,
-    },
-    reason: {
+    title: {
       type: String,
       required: true,
+      maxlength: 200,
     },
-    documents: [String],
-    status: {
+    content: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
+      required: true,
+      maxlength: 2000,
     },
-    counsellorRemarks: String,
-    approvedAt: Date,
-    rejectedAt: Date,
+    targetRole: {
+      type: String,
+      enum: ["student", "counsellor", "all"],
+      default: "all",
+    },
+    department: {
+      type: String,
+      default: null,
+    },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    expiresAt: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("OnDutyRequest", onDutyRequestSchema);
+// Index for faster queries
+announcementSchema.index({ targetRole: 1, isActive: 1 });
+announcementSchema.index({ createdAt: -1 });
+announcementSchema.index({ expiresAt: 1 });
+
+module.exports = mongoose.model("Announcement", announcementSchema);

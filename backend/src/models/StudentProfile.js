@@ -1,51 +1,57 @@
 const mongoose = require("mongoose");
 
-const studentProfileSchema = new mongoose.Schema(
+const onDutyRequestSchema = new mongoose.Schema(
   {
-    userId: {
+    studentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    },
-    studentId: {
-      type: String,
-      required: true,
-      unique: true,
     },
     counsellorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
-    attendance: {
-      totalClasses: { type: Number, default: 0 },
-      classesAttended: { type: Number, default: 0 },
-      percentage: { type: Number, default: 0 },
-      subjects: [
-        {
-          name: String,
-          classes: Number,
-          attended: Number,
-          percentage: Number,
-        },
-      ],
-      lastUpdated: Date,
+    startDate: {
+      type: Date,
+      required: true,
     },
-    marks: {
-      semester: Number,
-      subjects: [
-        {
-          name: String,
-          internalMarks: Number,
-          externalMarks: Number,
-          totalMarks: Number,
-          grade: String,
-        },
-      ],
-      gpa: Number,
-      lastUpdated: Date,
+    endDate: {
+      type: Date,
+      required: true,
     },
+    reason: {
+      type: String,
+      required: true,
+      maxlength: 500,
+    },
+    documents: [
+      {
+        filename: String,
+        url: String,
+        uploadedAt: Date,
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    counsellorRemarks: {
+      type: String,
+      maxlength: 500,
+    },
+    approvedAt: Date,
+    rejectedAt: Date,
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("StudentProfile", studentProfileSchema);
+// Index for faster queries
+onDutyRequestSchema.index({ studentId: 1, status: 1 });
+onDutyRequestSchema.index({ counsellorId: 1, status: 1 });
+onDutyRequestSchema.index({ createdAt: -1 });
+
+module.exports = mongoose.model("OnDutyRequest", onDutyRequestSchema);
