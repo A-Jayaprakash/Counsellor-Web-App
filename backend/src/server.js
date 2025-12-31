@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
 const redisClient = require("./config/redis");
+const userRoutes = require("./routes/user");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // Basic route for testing
 app.get("/", (req, res) => {
