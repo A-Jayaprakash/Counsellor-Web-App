@@ -50,4 +50,6 @@ announcementSchema.index({ targetRole: 1, isActive: 1 });
 announcementSchema.index({ createdAt: -1 });
 announcementSchema.index({ expiresAt: 1 });
 
-module.exports = mongoose.model("Announcement", announcementSchema);
+module.exports =
+  mongoose.models.Announcement ||
+  mongoose.model("Announcement", announcementSchema);

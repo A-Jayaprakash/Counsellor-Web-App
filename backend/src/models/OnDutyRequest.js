@@ -54,4 +54,8 @@ onDutyRequestSchema.index({ studentId: 1, status: 1 });
 onDutyRequestSchema.index({ counsellorId: 1, status: 1 });
 onDutyRequestSchema.index({ createdAt: -1 });
 
+module.exports =
+  mongoose.models.OnDutyRequest ||
+  mongoose.model("OnDutyRequest", onDutyRequestSchema);
+
 module.exports = mongoose.model("OnDutyRequest", onDutyRequestSchema);

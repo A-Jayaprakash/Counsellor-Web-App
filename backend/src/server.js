@@ -3,7 +3,11 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
 const redisClient = require("./config/redis");
+const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const dashboardRoutes = require("./routes/dashboard");
+const ondutyRoutes = require("./routes/onduty");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -15,9 +19,11 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/onduty", ondutyRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Basic route for testing
 app.get("/", (req, res) => {

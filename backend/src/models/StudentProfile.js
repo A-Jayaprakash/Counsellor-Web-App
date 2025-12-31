@@ -1,57 +1,53 @@
 const mongoose = require("mongoose");
 
-const onDutyRequestSchema = new mongoose.Schema(
+const studentProfileSchema = new mongoose.Schema(
   {
-    studentId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    studentId: {
+      type: String,
+      required: true,
+      unique: true,
     },
     counsellorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
-    startDate: {
-      type: Date,
-      required: true,
+    attendance: {
+      totalClasses: { type: Number, default: 0 },
+      classesAttended: { type: Number, default: 0 },
+      percentage: { type: Number, default: 0 },
+      subjects: [
+        {
+          name: String,
+          classes: Number,
+          attended: Number,
+          percentage: Number,
+        },
+      ],
+      lastUpdated: Date,
     },
-    endDate: {
-      type: Date,
-      required: true,
+    marks: {
+      semester: Number,
+      subjects: [
+        {
+          name: String,
+          internalMarks: Number,
+          externalMarks: Number,
+          totalMarks: Number,
+          grade: String,
+        },
+      ],
+      gpa: Number,
+      lastUpdated: Date,
     },
-    reason: {
-      type: String,
-      required: true,
-      maxlength: 500,
-    },
-    documents: [
-      {
-        filename: String,
-        url: String,
-        uploadedAt: Date,
-      },
-    ],
-    status: {
-      type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
-    },
-    counsellorRemarks: {
-      type: String,
-      maxlength: 500,
-    },
-    approvedAt: Date,
-    rejectedAt: Date,
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Index for faster queries
-onDutyRequestSchema.index({ studentId: 1, status: 1 });
-onDutyRequestSchema.index({ counsellorId: 1, status: 1 });
-onDutyRequestSchema.index({ createdAt: -1 });
-
-module.exports = mongoose.model("OnDutyRequest", onDutyRequestSchema);
+module.exports =
+  mongoose.models.StudentProfile ||
+  mongoose.model("StudentProfile", studentProfileSchema);
