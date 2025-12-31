@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
+import { SnackbarProvider } from "notistack";
 import CssBaseline from "@mui/material/CssBaseline";
 import store from "./redux/store";
 import theme from "./theme/theme";
@@ -25,22 +26,32 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppInitializer>
-          <Router>
-            <div className="App">
-              <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/attendance" element={<Attendance />} />
-                <Route path="/od-requests" element={<ODRequests />} />
-                <Route path="/marks" element={<Marks />} />
-                <Route path="/profile" element={<Profile />} />
-              </Routes>
-            </div>
-          </Router>
-        </AppInitializer>
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          autoHideDuration={3000}
+          style={{ marginTop: "60px" }}
+        >
+          <AppInitializer>
+            <Router>
+              <div className="App">
+                <Routes>
+                  <Route path="/" element={<Navigate to="/login" />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/attendance" element={<Attendance />} />
+                  <Route path="/od-requests" element={<ODRequests />} />
+                  <Route path="/marks" element={<Marks />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Routes>
+              </div>
+            </Router>
+          </AppInitializer>
+        </SnackbarProvider>
       </ThemeProvider>
     </Provider>
   );

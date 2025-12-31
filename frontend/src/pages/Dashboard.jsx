@@ -26,6 +26,8 @@ import { logout, rehydrateAuth } from '../redux/slices/authSlice';
 import apiClient from '../services/apiClient';
 import StatsCard from '../components/Dashboard/StatsCard';
 import AnnouncementsList from '../components/Dashboard/AnnouncementsList';
+import DashboardSkeleton from '../components/Skeletons/DashboardSkeleton';
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -191,19 +193,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          bgcolor: '#f5f7fa',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
