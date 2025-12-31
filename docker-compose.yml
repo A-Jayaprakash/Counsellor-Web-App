@@ -1,8 +1,13 @@
+version: '3.8'
+
 services:
+  # ==========================================
   # MongoDB - Local Development Database
+  # ==========================================
   mongodb:
     image: mongo:5.0
     container_name: acms-mongodb
+    restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
@@ -13,11 +18,20 @@ services:
       - mongodb_data:/data/db
     networks:
       - acms-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/acms --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
+  # ==========================================
   # Redis - Local Caching & Session Management
+  # ==========================================
   redis:
     image: redis:7-alpine
     container_name: acms-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes
@@ -25,13 +39,25 @@ services:
       - redis_data:/data
     networks:
       - acms-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
+# ==========================================
+# Volumes
+# ==========================================
 volumes:
   mongodb_data:
     driver: local
   redis_data:
     driver: local
 
+# ==========================================
+# Networks
+# ==========================================
 networks:
   acms-network:
     driver: bridge
