@@ -42,7 +42,8 @@ const authMiddleware = async (req, res, next) => {
 
     // Attach user to request
     req.user = user;
-    req.userId = user._id;
+    // Ensure userId is always a string for consistent comparisons
+    req.userId = user._id?.toString ? user._id.toString() : user._id;
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
