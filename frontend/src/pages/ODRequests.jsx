@@ -17,8 +17,22 @@ import {
   Chip,
   TextField,
   InputAdornment,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
-import { ArrowBack, Add, Search } from '@mui/icons-material';
+import {
+  Menu as MenuIcon,
+  Add,
+  Search,
+  School,
+  Assessment,
+  EventNote,
+} from '@mui/icons-material';
 import odRequestAPI from '../services/odRequestAPI';
 import ODRequestCard from '../components/ODRequest/ODRequestCard';
 import ODRequestForm from '../components/ODRequest/ODRequestForm';
@@ -35,6 +49,7 @@ const ODRequests = () => {
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [currentTab, setCurrentTab] = useState('all');
   const [formOpen, setFormOpen] = useState(false);
@@ -73,12 +88,10 @@ const ODRequests = () => {
   const filterRequests = () => {
     let filtered = odRequests;
 
-    // Filter by status
     if (currentTab !== 'all') {
       filtered = filtered.filter((od) => od.status === currentTab);
     }
 
-    // Filter by search query
     if (searchQuery.trim()) {
       filtered = filtered.filter((od) =>
         od.reason.toLowerCase().includes(searchQuery.toLowerCase())
@@ -94,6 +107,10 @@ const ODRequests = () => {
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   const handleCreateClick = () => {
@@ -195,7 +212,7 @@ const ODRequests = () => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          bgcolor: '#f5f7fa',
+          bgcolor: '#f5f5f5',
         }}
       >
         <CircularProgress size={60} thickness={4} />
@@ -204,27 +221,78 @@ const ODRequests = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f7fa' }}>
-      <AppBar position="static" elevation={0} sx={{ bgcolor: '#115293' }}>
-        <Toolbar sx={{ py: 1.5 }}>
-          <Button
-            color="inherit"
-            startIcon={<ArrowBack />}
-            onClick={() => navigate('/dashboard')}
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+      {/* AppBar */}
+      <AppBar position="static" elevation={1} sx={{ bgcolor: '#1976d2' }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
+            <MenuIcon />
+          </IconButton>
+
+          <Typography
+            variant="h6"
+            component="div"
             sx={{
-              mr: 2,
-              borderRadius: 2,
-              px: 2,
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+              flexGrow: 1,
+              textAlign: 'center',
+              fontWeight: 600,
+              letterSpacing: 1,
             }}
           >
-            Back
-          </Button>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
             On-Duty Requests
           </Typography>
+
+          <Box sx={{ width: 48 }} />
         </Toolbar>
       </AppBar>
+
+      {/* Side Drawer */}
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+        <Box sx={{ width: 280, pt: 2 }}>
+          <Typography variant="h6" sx={{ px: 3, mb: 2, fontWeight: 700 }}>
+            Navigation
+          </Typography>
+          <Divider />
+          <List>
+            <ListItem
+              button
+              onClick={() => {
+                navigate('/dashboard');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <School color="primary" />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                navigate('/attendance');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <School sx={{ color: '#4caf50' }} />
+              </ListItemIcon>
+              <ListItemText primary="View Attendance" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                navigate('/marks');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <Assessment sx={{ color: '#9c27b0' }} />
+              </ListItemIcon>
+              <ListItemText primary="View Marks" />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
 
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         {/* Search Bar */}
@@ -252,8 +320,19 @@ const ODRequests = () => {
         </Box>
 
         {/* Tabs */}
-        <Paper elevation={0} sx={{ mb: 3, borderRadius: 2, border: '1px solid #e0e0e0' }}>
-          <Tabs value={currentTab} onChange={handleTabChange} variant="fullWidth">
+        <Paper elevation={2} sx={{ mb: 3, borderRadius: 3 }}>
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            variant="fullWidth"
+            sx={{
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '1rem',
+              },
+            }}
+          >
             <Tab
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -303,14 +382,14 @@ const ODRequests = () => {
         {/* OD Requests List */}
         {filteredRequests.length === 0 ? (
           <Paper
-            elevation={0}
+            elevation={2}
             sx={{
               p: 6,
               textAlign: 'center',
-              borderRadius: 3,
-              border: '1px solid #e0e0e0',
+              borderRadius: 4,
             }}
           >
+            <EventNote sx={{ fontSize: 80, color: '#bdbdbd', mb: 2 }} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
               {searchQuery ? 'No OD requests found matching your search' : 'No OD requests found'}
             </Typography>
@@ -344,8 +423,8 @@ const ODRequests = () => {
           aria-label="add"
           sx={{
             position: 'fixed',
-            bottom: 24,
-            right: 24,
+            bottom: 32,
+            right: 32,
             width: 64,
             height: 64,
             boxShadow: '0 8px 24px rgba(25, 118, 210, 0.4)',
