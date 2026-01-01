@@ -39,6 +39,7 @@ import ODRequestForm from '../components/ODRequest/ODRequestForm';
 import ODDetailsDialog from '../components/ODRequest/ODDetailsDialog';
 import ApprovalDialog from '../components/ODRequest/ApprovalDialog';
 import ConfirmDialog from '../components/Dialogs/ConfirmDialog';
+import ODRequestsSkeleton from '../components/Skeletons/ODRequestsSkeleton';
 
 const ODRequests = () => {
   const navigate = useNavigate();
@@ -205,19 +206,7 @@ const ODRequests = () => {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          bgcolor: '#f5f5f5',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <ODRequestsSkeleton />;
   }
 
   return (

@@ -31,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import marksAPI from '../services/marksAPI';
 import MarksTable from '../components/Marks/MarksTable';
+import MarksSkeleton from '../components/Skeletons/MarksSkeleton';
 
 const Marks = () => {
   const navigate = useNavigate();
@@ -69,21 +70,8 @@ const Marks = () => {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          bgcolor: '#f5f5f5',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <MarksSkeleton />;
   }
-
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       {/* AppBar */}

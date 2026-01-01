@@ -33,6 +33,7 @@ import {
   EventNote,
 } from '@mui/icons-material';
 import attendanceAPI from '../services/attendanceAPI';
+import AttendanceSkeleton from '../components/Skeletons/AttendanceSkeleton';
 
 const Attendance = () => {
   const navigate = useNavigate();
@@ -77,19 +78,7 @@ const Attendance = () => {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          bgcolor: '#f5f5f5',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <AttendanceSkeleton />;
   }
 
   const overallPercentage = attendance?.overallPercentage || 0;

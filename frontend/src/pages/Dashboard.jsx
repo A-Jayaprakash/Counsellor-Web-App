@@ -33,6 +33,8 @@ import {
 } from '@mui/icons-material';
 import { logout, rehydrateAuth } from '../redux/slices/authSlice';
 import apiClient from '../services/apiClient';
+import DashboardSkeleton from '../components/Skeletons/DashboardSkeleton';
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -85,19 +87,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          bgcolor: '#f5f5f5',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-      </Box>
-    );
+    return <DashboardSkeleton />;
   }
 
   const iconColors = {
