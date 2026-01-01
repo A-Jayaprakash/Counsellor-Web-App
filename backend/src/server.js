@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
 const redisClient = require("./config/redis");
+const { generalLimiter, authLimiter } = require("./middleware/rateLimiter");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const dashboardRoutes = require("./routes/dashboard");
@@ -21,6 +22,11 @@ app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Apply general rate limiting to all routes
+app.use(generalLimiter);
+
+// Apply stricter rate limiting to auth routes
+app.use("/api/auth", authLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);

@@ -48,6 +48,11 @@ const studentProfileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for performance
+studentProfileSchema.index({ userId: 1 }); // Primary lookup field
+studentProfileSchema.index({ counsellorId: 1 }); // For counsellor queries
+studentProfileSchema.index({ studentId: 1 }); // Already unique, but explicit index
+
 module.exports =
   mongoose.models.StudentProfile ||
   mongoose.model("StudentProfile", studentProfileSchema);

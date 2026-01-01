@@ -49,4 +49,8 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Indexes for performance
+userSchema.index({ counsellorId: 1, role: 1 }); // Composite index for counsellor queries
+userSchema.index({ email: 1 }); // Already unique, but explicit index for queries
+
 module.exports = mongoose.models.User || mongoose.model("User", userSchema);

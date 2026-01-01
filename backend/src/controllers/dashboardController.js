@@ -2,26 +2,44 @@ const User = require("../models/User");
 const StudentProfile = require("../models/StudentProfile");
 const OnDutyRequest = require("../models/OnDutyRequest");
 const Announcement = require("../models/Announcement");
+const cacheService = require("../services/cacheService");
+
+// Cache TTL constants (in seconds)
+const DASHBOARD_STATS_TTL = 5 * 60; // 5 minutes
+const ANNOUNCEMENTS_TTL = 10 * 60; // 10 minutes
 
 // Get dashboard stats for current user
 exports.getDashboardStats = async (req, res) => {
   try {
     const userId = req.user._id;
     const userRole = req.user.role;
+    const cacheKey = `dashboard:stats:${userId}:${userRole}`;
+
+    // Try to get from cache
+    const cachedStats = await cacheService.get(cacheKey);
+    if (cachedStats) {
+      return res.json({
+        success: true,
+        stats: cachedStats,
+        cached: true,
+      });
+    }
 
     let stats = {};
 
     if (userRole === "student") {
-      // Student dashboard stats
-      const profile = await StudentProfile.findOne({ userId });
-      const pendingODs = await OnDutyRequest.countDocuments({
-        studentId: userId,
-        status: "pending",
-      });
-      const approvedODs = await OnDutyRequest.countDocuments({
-        studentId: userId,
-        status: "approved",
-      });
+      // Student dashboard stats - parallel queries
+      const [profile, pendingODs, approvedODs] = await Promise.all([
+        StudentProfile.findOne({ userId }),
+        OnDutyRequest.countDocuments({
+          studentId: userId,
+          status: "pending",
+        }),
+        OnDutyRequest.countDocuments({
+          studentId: userId,
+          status: "approved",
+        }),
+      ]);
 
       stats = {
         attendance: profile?.attendance?.percentage || 0,
@@ -34,36 +52,44 @@ exports.getDashboardStats = async (req, res) => {
         semester: profile?.marks?.semester || 1,
       };
     } else if (userRole === "counsellor") {
-      // Counsellor dashboard stats
-      const assignedStudents = await User.countDocuments({
-        counsellorId: userId,
-        role: "student",
-      });
-      const pendingODs = await OnDutyRequest.countDocuments({
-        counsellorId: userId,
-        status: "pending",
-      });
-      const todayODs = await OnDutyRequest.countDocuments({
-        counsellorId: userId,
-        createdAt: { $gte: new Date().setHours(0, 0, 0, 0) },
-      });
+      // Counsellor dashboard stats - parallel queries
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const [assignedStudents, pendingODs, todayODs, totalODs] = await Promise.all([
+        User.countDocuments({
+          counsellorId: userId,
+          role: "student",
+        }),
+        OnDutyRequest.countDocuments({
+          counsellorId: userId,
+          status: "pending",
+        }),
+        OnDutyRequest.countDocuments({
+          counsellorId: userId,
+          createdAt: { $gte: todayStart },
+        }),
+        OnDutyRequest.countDocuments({ counsellorId: userId }),
+      ]);
 
       stats = {
         assignedStudents,
         pendingODs,
         todayODs,
-        totalODs: await OnDutyRequest.countDocuments({ counsellorId: userId }),
+        totalODs,
       };
     } else if (userRole === "admin") {
-      // Admin dashboard stats
-      const totalUsers = await User.countDocuments();
-      const totalStudents = await User.countDocuments({ role: "student" });
-      const totalCounsellors = await User.countDocuments({
-        role: "counsellor",
-      });
-      const totalAnnouncements = await Announcement.countDocuments({
-        isActive: true,
-      });
+      // Admin dashboard stats - parallel queries
+      const [totalUsers, totalStudents, totalCounsellors, totalAnnouncements] = await Promise.all([
+        User.countDocuments(),
+        User.countDocuments({ role: "student" }),
+        User.countDocuments({
+          role: "counsellor",
+        }),
+        Announcement.countDocuments({
+          isActive: true,
+        }),
+      ]);
 
       stats = {
         totalUsers,
@@ -72,6 +98,9 @@ exports.getDashboardStats = async (req, res) => {
         totalAnnouncements,
       };
     }
+
+    // Cache the stats
+    await cacheService.set(cacheKey, stats, DASHBOARD_STATS_TTL);
 
     res.json({
       success: true,
@@ -91,17 +120,38 @@ exports.getAnnouncements = async (req, res) => {
   try {
     const userRole = req.user.role;
     const limit = parseInt(req.query.limit) || 10;
+    const cacheKey = `dashboard:announcements:${userRole}:${limit}`;
+
+    // Try to get from cache
+    const cachedAnnouncements = await cacheService.get(cacheKey);
+    if (cachedAnnouncements) {
+      return res.json({
+        success: true,
+        count: cachedAnnouncements.length,
+        announcements: cachedAnnouncements,
+        cached: true,
+      });
+    }
 
     const query = {
       isActive: true,
-      $or: [{ targetRole: "all" }, { targetRole: userRole }],
-      $or: [{ expiresAt: null }, { expiresAt: { $gte: new Date() } }],
+      $and: [
+        {
+          $or: [{ targetRole: "all" }, { targetRole: userRole }],
+        },
+        {
+          $or: [{ expiresAt: null }, { expiresAt: { $gte: new Date() } }],
+        },
+      ],
     };
 
     const announcements = await Announcement.find(query)
       .populate("adminId", "firstName lastName")
       .sort({ createdAt: -1 })
       .limit(limit);
+
+    // Cache the announcements
+    await cacheService.set(cacheKey, announcements, ANNOUNCEMENTS_TTL);
 
     res.json({
       success: true,

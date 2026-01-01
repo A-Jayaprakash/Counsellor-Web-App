@@ -1,5 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const cacheService = require("../services/cacheService");
+
+// Cache TTL for user data (15 minutes)
+const USER_CACHE_TTL = 15 * 60;
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -14,15 +18,27 @@ const authMiddleware = async (req, res, next) => {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
 
-    // Find user
-    const user = await User.findById(decoded.userId).select("-password");
+    // Try to get user from cache first
+    const cacheKey = `user:${userId}`;
+    let user = await cacheService.get(cacheKey);
 
     if (!user) {
-      return res.status(401).json({
-        message: "User not found, token invalid",
-      });
+      // Cache miss - fetch from database
+      const userDoc = await User.findById(userId).select("-password");
+
+      if (!userDoc) {
+        return res.status(401).json({
+          message: "User not found, token invalid",
+        });
+      }
+
+      // Cache the user data as plain object
+      user = userDoc.toObject ? userDoc.toObject() : userDoc;
+      await cacheService.set(cacheKey, user, USER_CACHE_TTL);
     }
+    // user is already a plain object from cache or database
 
     // Attach user to request
     req.user = user;
