@@ -28,7 +28,10 @@ import {
   School,
   CalendarToday,
   EventNote,
+  Brightness4,
+  Brightness7,
 } from '@mui/icons-material';
+import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
 import marksAPI from '../services/marksAPI';
 import MarksTable from '../components/Marks/MarksTable';
 import MarksSkeleton from '../components/Skeletons/MarksSkeleton';
@@ -37,6 +40,7 @@ const Marks = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { enqueueSnackbar } = useSnackbar();
+  const { mode, toggleTheme } = useCustomTheme();
 
   const [marksData, setMarksData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -72,10 +76,11 @@ const Marks = () => {
   if (loading) {
     return <MarksSkeleton />;
   }
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* AppBar */}
-      <AppBar position="static" elevation={1} sx={{ bgcolor: '#1976d2' }}>
+      <AppBar position="static" elevation={1}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
             <MenuIcon />
@@ -94,7 +99,9 @@ const Marks = () => {
             Academic Performance
           </Typography>
 
-          <Box sx={{ width: 48 }} />
+          <IconButton color="inherit" onClick={toggleTheme}>
+            {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -153,7 +160,7 @@ const Marks = () => {
             <Card elevation={2} sx={{ borderRadius: 4, height: '100%', minHeight: 200 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 <Assessment sx={{ fontSize: 56, color: '#2196f3', mb: 2 }} />
-                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                   {marksData?.gpa?.toFixed(2) || '0.00'}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: 'text.primary' }}>
@@ -171,7 +178,7 @@ const Marks = () => {
             <Card elevation={2} sx={{ borderRadius: 4, height: '100%', minHeight: 200 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 <TrendingUp sx={{ fontSize: 56, color: '#9c27b0', mb: 2 }} />
-                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                   {marksData?.cgpa?.toFixed(2) || '0.00'}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: 'text.primary' }}>
@@ -189,7 +196,7 @@ const Marks = () => {
             <Card elevation={2} sx={{ borderRadius: 4, height: '100%', minHeight: 200 }}>
               <CardContent sx={{ textAlign: 'center', py: 4 }}>
                 <School sx={{ fontSize: 56, color: '#4caf50', mb: 2 }} />
-                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                   {marksData?.subjects?.length || 0}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: 'text.primary' }}>
@@ -210,7 +217,7 @@ const Marks = () => {
                 <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ mb: 1 }}>
                   Last Updated
                 </Typography>
-                <Typography variant="h6" fontWeight="700" sx={{ mt: 2 }}>
+                <Typography variant="h6" fontWeight="700" color="text.primary" sx={{ mt: 2 }}>
                   {marksData?.lastUpdated
                     ? new Date(marksData.lastUpdated).toLocaleDateString('en-IN', {
                         day: '2-digit',

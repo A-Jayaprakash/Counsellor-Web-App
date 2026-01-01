@@ -32,7 +32,10 @@ import {
   School,
   Assessment,
   EventNote,
+  Brightness4,
+  Brightness7,
 } from '@mui/icons-material';
+import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
 import odRequestAPI from '../services/odRequestAPI';
 import ODRequestCard from '../components/ODRequest/ODRequestCard';
 import ODRequestForm from '../components/ODRequest/ODRequestForm';
@@ -45,6 +48,7 @@ const ODRequests = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { enqueueSnackbar } = useSnackbar();
+  const { mode, toggleTheme } = useCustomTheme();
 
   const [odRequests, setODRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
@@ -210,9 +214,9 @@ const ODRequests = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* AppBar */}
-      <AppBar position="static" elevation={1} sx={{ bgcolor: '#1976d2' }}>
+      <AppBar position="static" elevation={1}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
             <MenuIcon />
@@ -231,7 +235,9 @@ const ODRequests = () => {
             On-Duty Requests
           </Typography>
 
-          <Box sx={{ width: 48 }} />
+          <IconButton color="inherit" onClick={toggleTheme}>
+            {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -299,7 +305,7 @@ const ODRequests = () => {
               ),
             }}
             sx={{
-              bgcolor: 'white',
+              bgcolor: mode === 'dark' ? '#1a1a1a' : 'white',
               borderRadius: 2,
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
@@ -378,7 +384,7 @@ const ODRequests = () => {
               borderRadius: 4,
             }}
           >
-            <EventNote sx={{ fontSize: 80, color: '#bdbdbd', mb: 2 }} />
+            <EventNote sx={{ fontSize: 80, color: mode === 'dark' ? '#555555' : '#bdbdbd', mb: 2 }} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
               {searchQuery ? 'No OD requests found matching your search' : 'No OD requests found'}
             </Typography>
@@ -416,10 +422,14 @@ const ODRequests = () => {
             right: 32,
             width: 64,
             height: 64,
-            boxShadow: '0 8px 24px rgba(25, 118, 210, 0.4)',
+            boxShadow: mode === 'dark'
+              ? '0 8px 24px rgba(66, 165, 245, 0.4)'
+              : '0 8px 24px rgba(25, 118, 210, 0.4)',
             '&:hover': {
               transform: 'scale(1.1)',
-              boxShadow: '0 12px 32px rgba(25, 118, 210, 0.5)',
+              boxShadow: mode === 'dark'
+                ? '0 12px 32px rgba(66, 165, 245, 0.5)'
+                : '0 12px 32px rgba(25, 118, 210, 0.5)',
             },
             transition: 'all 0.3s',
           }}

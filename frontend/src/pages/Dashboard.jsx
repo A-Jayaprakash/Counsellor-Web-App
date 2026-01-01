@@ -30,16 +30,19 @@ import {
   Person,
   Campaign,
   EventNote,
+  Brightness4,
+  Brightness7,
 } from '@mui/icons-material';
 import { logout, rehydrateAuth } from '../redux/slices/authSlice';
+import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
 import apiClient from '../services/apiClient';
 import DashboardSkeleton from '../components/Skeletons/DashboardSkeleton';
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { mode, toggleTheme } = useCustomTheme();
 
   const [stats, setStats] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
@@ -98,9 +101,9 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* AppBar */}
-      <AppBar position="static" elevation={1} sx={{ bgcolor: '#1976d2' }}>
+      <AppBar position="static" elevation={1}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
             <MenuIcon />
@@ -120,6 +123,10 @@ const Dashboard = () => {
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+              {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
+
             <Person />
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
@@ -184,12 +191,12 @@ const Dashboard = () => {
         </Box>
       </Drawer>
 
-      {/* Main Content - Using Flexbox for Better Control */}
+      {/* Main Content */}
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box sx={{ display: 'flex', gap: 3 }}>
-          {/* LEFT SECTION - Stats Cards + Counsellor */}
+          {/* LEFT SECTION */}
           <Box sx={{ flex: '0 0 65%' }}>
-            {/* 4 Stat Cards Grid */}
+            {/* 4 Stat Cards */}
             <Grid container spacing={3} sx={{ mb: 3 }}>
               {/* Attendance */}
               <Grid item xs={12} sm={6}>
@@ -213,7 +220,7 @@ const Dashboard = () => {
                           textTransform: 'uppercase',
                           fontWeight: 700,
                           fontSize: '0.7rem',
-                          color: '#757575',
+                          color: 'text.secondary',
                           letterSpacing: 0.5,
                         }}
                       >
@@ -221,7 +228,7 @@ const Dashboard = () => {
                       </Typography>
                       <School sx={{ fontSize: 32, color: iconColors.attendance }} />
                     </Box>
-                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                       {stats?.attendance || 0}%
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>
@@ -253,7 +260,7 @@ const Dashboard = () => {
                           textTransform: 'uppercase',
                           fontWeight: 700,
                           fontSize: '0.7rem',
-                          color: '#757575',
+                          color: 'text.secondary',
                           letterSpacing: 0.5,
                         }}
                       >
@@ -261,7 +268,7 @@ const Dashboard = () => {
                       </Typography>
                       <Assessment sx={{ fontSize: 32, color: iconColors.gpa }} />
                     </Box>
-                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                       {stats?.gpa?.toFixed(2) || '0.00'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>
@@ -293,7 +300,7 @@ const Dashboard = () => {
                           textTransform: 'uppercase',
                           fontWeight: 700,
                           fontSize: '0.7rem',
-                          color: '#757575',
+                          color: 'text.secondary',
                           letterSpacing: 0.5,
                         }}
                       >
@@ -301,7 +308,7 @@ const Dashboard = () => {
                       </Typography>
                       <PendingActions sx={{ fontSize: 32, color: iconColors.pending }} />
                     </Box>
-                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                       {stats?.pendingODs || 0}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>
@@ -333,7 +340,7 @@ const Dashboard = () => {
                           textTransform: 'uppercase',
                           fontWeight: 700,
                           fontSize: '0.7rem',
-                          color: '#757575',
+                          color: 'text.secondary',
                           letterSpacing: 0.5,
                         }}
                       >
@@ -341,7 +348,7 @@ const Dashboard = () => {
                       </Typography>
                       <CheckCircle sx={{ fontSize: 32, color: iconColors.cgpa }} />
                     </Box>
-                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: '#1a1a1a' }}>
+                    <Typography variant="h2" fontWeight="800" sx={{ mb: 1, color: 'text.primary' }}>
                       {stats?.cgpa?.toFixed(2) || '0.00'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 'auto' }}>
@@ -356,7 +363,7 @@ const Dashboard = () => {
             <Card elevation={2} sx={{ borderRadius: 4 }}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Person sx={{ mr: 1.5, color: '#1976d2', fontSize: 28 }} />
+                  <Person sx={{ mr: 1.5, color: 'primary.main', fontSize: 28 }} />
                   <Typography variant="h6" fontWeight="700" color="text.primary">
                     Counsellor Details
                   </Typography>
@@ -380,7 +387,7 @@ const Dashboard = () => {
             </Card>
           </Box>
 
-          {/* RIGHT SECTION - Recent Updates (Independent) */}
+          {/* RIGHT SECTION - Recent Updates */}
           <Box sx={{ flex: '0 0 calc(35% - 24px)' }}>
             <Paper
               elevation={2}
@@ -394,7 +401,7 @@ const Dashboard = () => {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Campaign sx={{ mr: 1.5, color: '#1976d2', fontSize: 28 }} />
+                <Campaign sx={{ mr: 1.5, color: 'primary.main', fontSize: 28 }} />
                 <Typography variant="h6" fontWeight="700" color="text.primary">
                   Recent Updates
                 </Typography>
@@ -412,7 +419,7 @@ const Dashboard = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Campaign sx={{ fontSize: 80, color: '#bdbdbd', mb: 2, mx: 'auto' }} />
+                  <Campaign sx={{ fontSize: 80, color: mode === 'dark' ? '#555555' : '#bdbdbd', mb: 2, mx: 'auto' }} />
                   <Typography variant="body1" color="text.secondary">
                     No announcements available
                   </Typography>
@@ -426,12 +433,12 @@ const Dashboard = () => {
                       sx={{
                         p: 2.5,
                         mb: 2,
-                        bgcolor: '#f9f9f9',
+                        bgcolor: mode === 'dark' ? '#242424' : '#f9f9f9',
                         borderRadius: 2,
-                        borderLeft: '4px solid #1976d2',
+                        borderLeft: `4px solid ${mode === 'dark' ? '#42a5f5' : '#1976d2'}`,
                         transition: 'all 0.2s',
                         '&:hover': {
-                          bgcolor: '#f0f0f0',
+                          bgcolor: mode === 'dark' ? '#2a2a2a' : '#f0f0f0',
                           transform: 'translateX(4px)',
                         },
                       }}

@@ -6,11 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Provider } from "react-redux";
-import { ThemeProvider } from "@mui/material/styles";
 import { SnackbarProvider } from "notistack";
-import CssBaseline from "@mui/material/CssBaseline";
 import store from "./redux/store";
-import theme from "./theme/theme";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import AppInitializer from "./components/AppInitializer";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -24,8 +22,7 @@ import "./App.css";
 function App() {
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <ThemeProvider>
         <SnackbarProvider
           maxSnack={3}
           anchorOrigin={{

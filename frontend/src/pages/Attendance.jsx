@@ -31,7 +31,10 @@ import {
   TrendingUp,
   Assessment,
   EventNote,
+  Brightness4,
+  Brightness7,
 } from '@mui/icons-material';
+import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
 import attendanceAPI from '../services/attendanceAPI';
 import AttendanceSkeleton from '../components/Skeletons/AttendanceSkeleton';
 
@@ -39,6 +42,7 @@ const Attendance = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { enqueueSnackbar } = useSnackbar();
+  const { mode, toggleTheme } = useCustomTheme();
 
   const [attendance, setAttendance] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -84,9 +88,9 @@ const Attendance = () => {
   const overallPercentage = attendance?.overallPercentage || 0;
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* AppBar */}
-      <AppBar position="static" elevation={1} sx={{ bgcolor: '#1976d2' }}>
+      <AppBar position="static" elevation={1}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
             <MenuIcon />
@@ -105,7 +109,9 @@ const Attendance = () => {
             Attendance Report
           </Typography>
 
-          <Box sx={{ width: 48 }} />
+          <IconButton color="inherit" onClick={toggleTheme}>
+            {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -174,7 +180,7 @@ const Attendance = () => {
             >
               <CardContent sx={{ textAlign: 'center', py: 5 }}>
                 <School sx={{ fontSize: 64, color: getAttendanceColor(overallPercentage), mb: 3 }} />
-                <Typography variant="h2" fontWeight="800" sx={{ mb: 2, color: '#1a1a1a' }}>
+                <Typography variant="h2" fontWeight="800" sx={{ mb: 2, color: 'text.primary' }}>
                   {overallPercentage.toFixed(1)}%
                 </Typography>
                 <Typography variant="h6" sx={{ mb: 1, fontWeight: 600, color: 'text.primary' }}>
@@ -198,7 +204,7 @@ const Attendance = () => {
                         width: 56,
                         height: 56,
                         borderRadius: 2,
-                        bgcolor: '#e3f2fd',
+                        bgcolor: mode === 'dark' ? 'rgba(66, 165, 245, 0.1)' : '#e3f2fd',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -206,9 +212,9 @@ const Attendance = () => {
                         mb: 2,
                       }}
                     >
-                      <CalendarToday sx={{ fontSize: 28, color: '#1976d2' }} />
+                      <CalendarToday sx={{ fontSize: 28, color: '#2196f3' }} />
                     </Box>
-                    <Typography variant="h4" fontWeight="800" color="#1976d2" sx={{ mb: 1 }}>
+                    <Typography variant="h4" fontWeight="800" color="primary.main" sx={{ mb: 1 }}>
                       {attendance?.totalClasses || 0}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" fontWeight={600}>
@@ -226,7 +232,7 @@ const Attendance = () => {
                         width: 56,
                         height: 56,
                         borderRadius: 2,
-                        bgcolor: '#e8f5e9',
+                        bgcolor: mode === 'dark' ? 'rgba(76, 175, 80, 0.1)' : '#e8f5e9',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -236,7 +242,7 @@ const Attendance = () => {
                     >
                       <CheckCircle sx={{ fontSize: 28, color: '#4caf50' }} />
                     </Box>
-                    <Typography variant="h4" fontWeight="800" color="#4caf50" sx={{ mb: 1 }}>
+                    <Typography variant="h4" fontWeight="800" sx={{ color: '#4caf50', mb: 1 }}>
                       {attendance?.totalAttended || 0}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" fontWeight={600}>
@@ -254,7 +260,7 @@ const Attendance = () => {
                         width: 56,
                         height: 56,
                         borderRadius: 2,
-                        bgcolor: '#ffebee',
+                        bgcolor: mode === 'dark' ? 'rgba(244, 67, 54, 0.1)' : '#ffebee',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -264,7 +270,7 @@ const Attendance = () => {
                     >
                       <Cancel sx={{ fontSize: 28, color: '#f44336' }} />
                     </Box>
-                    <Typography variant="h4" fontWeight="800" color="#f44336" sx={{ mb: 1 }}>
+                    <Typography variant="h4" fontWeight="800" sx={{ color: '#f44336', mb: 1 }}>
                       {(attendance?.totalClasses || 0) - (attendance?.totalAttended || 0)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" fontWeight={600}>
@@ -276,11 +282,11 @@ const Attendance = () => {
 
               <Grid item xs={12}>
                 <Paper elevation={2} sx={{ p: 3, borderRadius: 4, textAlign: 'center' }}>
-                  <CalendarToday sx={{ fontSize: 24, color: '#757575', mb: 1 }} />
+                  <CalendarToday sx={{ fontSize: 24, color: 'text.secondary', mb: 1 }} />
                   <Typography variant="body2" color="text.secondary" fontWeight={600}>
                     Last Updated
                   </Typography>
-                  <Typography variant="h6" fontWeight="700" sx={{ mt: 0.5 }}>
+                  <Typography variant="h6" fontWeight="700" color="text.primary" sx={{ mt: 0.5 }}>
                     {attendance?.lastUpdated
                       ? new Date(attendance.lastUpdated).toLocaleDateString('en-IN', {
                           day: '2-digit',
@@ -298,8 +304,8 @@ const Attendance = () => {
           <Grid item xs={12}>
             <Paper elevation={2} sx={{ p: 4, borderRadius: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <TrendingUp sx={{ mr: 1.5, color: '#1976d2', fontSize: 28 }} />
-                <Typography variant="h5" fontWeight="700">
+                <TrendingUp sx={{ mr: 1.5, color: 'primary.main', fontSize: 28 }} />
+                <Typography variant="h5" fontWeight="700" color="text.primary">
                   Subject-wise Attendance
                 </Typography>
               </Box>
@@ -307,7 +313,7 @@ const Attendance = () => {
 
               {!attendance?.subjects || attendance.subjects.length === 0 ? (
                 <Box sx={{ textAlign: 'center', py: 6 }}>
-                  <School sx={{ fontSize: 64, color: '#bdbdbd', mb: 2 }} />
+                  <School sx={{ fontSize: 64, color: mode === 'dark' ? '#555555' : '#bdbdbd', mb: 2 }} />
                   <Typography variant="body1" color="text.secondary">
                     No attendance data available
                   </Typography>
@@ -323,12 +329,12 @@ const Attendance = () => {
                           sx={{
                             p: 3,
                             borderRadius: 3,
-                            bgcolor: '#fafafa',
-                            border: '1px solid #eeeeee',
+                            bgcolor: mode === 'dark' ? '#242424' : '#fafafa',
+                            border: mode === 'dark' ? '1px solid #333333' : '1px solid #eeeeee',
                             transition: 'all 0.2s',
                             '&:hover': {
-                              bgcolor: '#f5f5f5',
-                              borderColor: '#e0e0e0',
+                              bgcolor: mode === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                              borderColor: mode === 'dark' ? '#444444' : '#e0e0e0',
                               transform: 'translateX(4px)',
                             },
                           }}
@@ -342,7 +348,7 @@ const Attendance = () => {
                             }}
                           >
                             <Box>
-                              <Typography variant="h6" fontWeight="700">
+                              <Typography variant="h6" fontWeight="700" color="text.primary">
                                 {subject.name}
                               </Typography>
                               <Typography variant="body2" color="text.secondary">
@@ -365,7 +371,7 @@ const Attendance = () => {
                             sx={{
                               height: 12,
                               borderRadius: 6,
-                              bgcolor: '#e0e0e0',
+                              bgcolor: mode === 'dark' ? '#333333' : '#e0e0e0',
                               '& .MuiLinearProgress-bar': {
                                 bgcolor: getAttendanceColor(percentage),
                                 borderRadius: 6,
