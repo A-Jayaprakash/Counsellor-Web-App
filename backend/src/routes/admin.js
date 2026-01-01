@@ -5,6 +5,7 @@ const Announcement = require("../models/Announcement");
 const OnDutyRequest = require("../models/OnDutyRequest");
 const authMiddleware = require("../middleware/authMiddleware");
 const rbacMiddleware = require("../middleware/rbacMiddleware");
+const cacheService = require("../services/cacheService");
 
 // All routes require admin role
 router.use(authMiddleware, rbacMiddleware("admin"));
@@ -71,6 +72,11 @@ router.patch("/users/:userId/role", async (req, res) => {
       });
     }
 
+    // Invalidate user cache to ensure fresh authorization data
+    await cacheService.del(`user:${user._id.toString()}`);
+    // Also invalidate dashboard stats cache for this user since role affects dashboard
+    await cacheService.delByPattern(`dashboard:stats:${user._id.toString()}:*`);
+
     res.json({
       success: true,
       message: "User role updated successfully",
@@ -102,6 +108,20 @@ router.patch("/users/:studentId/assign-counsellor", async (req, res) => {
       });
     }
 
+    // Fetch current student to get old counsellorId before updating
+    const currentStudent = await User.findById(req.params.studentId).select(
+      "counsellorId"
+    );
+
+    if (!currentStudent) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    const oldCounsellorId = currentStudent.counsellorId;
+
     // Update student
     const student = await User.findByIdAndUpdate(
       req.params.studentId,
@@ -115,6 +135,35 @@ router.patch("/users/:studentId/assign-counsellor", async (req, res) => {
         message: "Student not found",
       });
     }
+
+    // Invalidate user cache to ensure fresh authorization data
+    await cacheService.del(`user:${student._id.toString()}`);
+    // Invalidate attendance cache for this student
+    await cacheService.del(`attendance:${student._id.toString()}`);
+
+    // Invalidate old counsellor's cache if student was previously assigned
+    if (
+      oldCounsellorId &&
+      oldCounsellorId.toString() !== counsellorId.toString()
+    ) {
+      await cacheService.del(
+        `attendance:counsellor:${oldCounsellorId.toString()}`
+      );
+      await cacheService.delByPattern(
+        `dashboard:stats:${oldCounsellorId.toString()}:*`
+      );
+    }
+
+    // Invalidate new counsellor's cache
+    await cacheService.del(`attendance:counsellor:${counsellorId.toString()}`);
+    // Invalidate new counsellor's dashboard stats cache to reflect updated assignedStudents count
+    await cacheService.delByPattern(
+      `dashboard:stats:${counsellorId.toString()}:*`
+    );
+    // Invalidate dashboard stats cache for student
+    await cacheService.delByPattern(
+      `dashboard:stats:${student._id.toString()}:*`
+    );
 
     res.json({
       success: true,
@@ -139,6 +188,16 @@ router.delete("/users/:userId", async (req, res) => {
         success: false,
         message: "User not found",
       });
+    }
+
+    // Invalidate user cache
+    await cacheService.del(`user:${user._id.toString()}`);
+    // Invalidate related caches
+    await cacheService.delByPattern(`dashboard:stats:${user._id.toString()}:*`);
+    if (user.counsellorId) {
+      await cacheService.del(
+        `attendance:counsellor:${user.counsellorId.toString()}`
+      );
     }
 
     res.json({

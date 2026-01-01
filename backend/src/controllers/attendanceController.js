@@ -61,7 +61,10 @@ exports.getAttendance = async (req, res) => {
     }
 
     // Check if counsellor is authorized
-    if (requesterRole === "counsellor" && student?.counsellorId?.toString() !== requesterId.toString()) {
+    if (
+      requesterRole === "counsellor" &&
+      student?.counsellorId?.toString() !== requesterId.toString()
+    ) {
       return res.status(403).json({
         success: false,
         message: "Not your assigned student",
@@ -95,9 +98,9 @@ exports.getStudentsAttendance = async (req, res) => {
     const counsellorId = req.user._id;
     const cacheKey = `attendance:counsellor:${counsellorId}`;
 
-    // Try to get from cache
+    // Try to get from cache (use !== null to handle empty arrays correctly)
     const cachedData = await cacheService.get(cacheKey);
-    if (cachedData) {
+    if (cachedData !== null) {
       return res.json({
         success: true,
         count: cachedData.length,

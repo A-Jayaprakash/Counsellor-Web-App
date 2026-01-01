@@ -56,21 +56,22 @@ exports.getDashboardStats = async (req, res) => {
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
-      const [assignedStudents, pendingODs, todayODs, totalODs] = await Promise.all([
-        User.countDocuments({
-          counsellorId: userId,
-          role: "student",
-        }),
-        OnDutyRequest.countDocuments({
-          counsellorId: userId,
-          status: "pending",
-        }),
-        OnDutyRequest.countDocuments({
-          counsellorId: userId,
-          createdAt: { $gte: todayStart },
-        }),
-        OnDutyRequest.countDocuments({ counsellorId: userId }),
-      ]);
+      const [assignedStudents, pendingODs, todayODs, totalODs] =
+        await Promise.all([
+          User.countDocuments({
+            counsellorId: userId,
+            role: "student",
+          }),
+          OnDutyRequest.countDocuments({
+            counsellorId: userId,
+            status: "pending",
+          }),
+          OnDutyRequest.countDocuments({
+            counsellorId: userId,
+            createdAt: { $gte: todayStart },
+          }),
+          OnDutyRequest.countDocuments({ counsellorId: userId }),
+        ]);
 
       stats = {
         assignedStudents,
@@ -80,16 +81,17 @@ exports.getDashboardStats = async (req, res) => {
       };
     } else if (userRole === "admin") {
       // Admin dashboard stats - parallel queries
-      const [totalUsers, totalStudents, totalCounsellors, totalAnnouncements] = await Promise.all([
-        User.countDocuments(),
-        User.countDocuments({ role: "student" }),
-        User.countDocuments({
-          role: "counsellor",
-        }),
-        Announcement.countDocuments({
-          isActive: true,
-        }),
-      ]);
+      const [totalUsers, totalStudents, totalCounsellors, totalAnnouncements] =
+        await Promise.all([
+          User.countDocuments(),
+          User.countDocuments({ role: "student" }),
+          User.countDocuments({
+            role: "counsellor",
+          }),
+          Announcement.countDocuments({
+            isActive: true,
+          }),
+        ]);
 
       stats = {
         totalUsers,
@@ -122,9 +124,9 @@ exports.getAnnouncements = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const cacheKey = `dashboard:announcements:${userRole}:${limit}`;
 
-    // Try to get from cache
+    // Try to get from cache (use !== null to handle empty arrays correctly)
     const cachedAnnouncements = await cacheService.get(cacheKey);
-    if (cachedAnnouncements) {
+    if (cachedAnnouncements !== null) {
       return res.json({
         success: true,
         count: cachedAnnouncements.length,

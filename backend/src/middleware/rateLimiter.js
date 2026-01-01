@@ -6,9 +6,9 @@ const redisClient = require("../config/redis");
  * Implements the store interface required by express-rate-limit
  */
 class RedisStore {
-  constructor(redisClient) {
+  constructor(redisClient, prefix = "rl:") {
     this.client = redisClient;
-    this.prefix = "rl:";
+    this.prefix = prefix;
   }
 
   async increment(key) {
@@ -63,7 +63,7 @@ const generalLimiter = rateLimit({
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  store: new RedisStore(redisClient),
+  store: new RedisStore(redisClient, "rl:general:"), // Different prefix to separate from auth limiter
   skip: (req) => {
     // Skip rate limiting for health checks
     return req.path === "/health" || req.path === "/";
@@ -83,7 +83,7 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  store: new RedisStore(redisClient),
+  store: new RedisStore(redisClient, "rl:auth:"), // Different prefix to separate from general limiter
   skipSuccessfulRequests: false,
 });
 
@@ -116,7 +116,10 @@ const userLimiter = async (req, res, next) => {
     // Add rate limit headers
     res.setHeader("X-RateLimit-Limit", "200");
     res.setHeader("X-RateLimit-Remaining", Math.max(0, 200 - count));
-    res.setHeader("X-RateLimit-Reset", new Date(Date.now() + 60000).toISOString());
+    res.setHeader(
+      "X-RateLimit-Reset",
+      new Date(Date.now() + 60000).toISOString()
+    );
 
     next();
   } catch (error) {
@@ -131,4 +134,3 @@ module.exports = {
   authLimiter,
   userLimiter,
 };
-

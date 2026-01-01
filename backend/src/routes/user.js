@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const rbacMiddleware = require("../middleware/rbacMiddleware");
+const cacheService = require("../services/cacheService");
 
 // Get current user profile
 router.get("/profile", authMiddleware, async (req, res) => {
@@ -35,6 +36,9 @@ router.patch("/profile", authMiddleware, async (req, res) => {
       new: true,
       runValidators: true,
     }).select("-password");
+
+    // Invalidate user cache to ensure fresh data
+    await cacheService.del(`user:${user._id.toString()}`);
 
     res.json({
       success: true,
