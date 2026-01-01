@@ -19,6 +19,7 @@ import {
   Card,
   CardContent,
   Divider,
+  
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -32,6 +33,7 @@ import {
   EventNote,
   Brightness4,
   Brightness7,
+  Event
 } from '@mui/icons-material';
 import { logout, rehydrateAuth } from '../redux/slices/authSlice';
 import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
@@ -119,7 +121,7 @@ const Dashboard = () => {
               letterSpacing: 1,
             }}
           >
-            ACMS
+            REC Counsellor's Spot
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -187,6 +189,11 @@ const Dashboard = () => {
               </ListItemIcon>
               <ListItemText primary="OD Requests" />
             </ListItem>
+            <ListItem button onClick={() => { navigate('/event-tracker'); setDrawerOpen(false); }}>
+              <ListItemIcon><Event sx={{ color: '#ff5722' }} /></ListItemIcon>
+              <ListItemText primary="Event Tracker" />
+            </ListItem>
+
           </List>
         </Box>
       </Drawer>

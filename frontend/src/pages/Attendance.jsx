@@ -33,6 +33,7 @@ import {
   EventNote,
   Brightness4,
   Brightness7,
+  Event
 } from '@mui/icons-material';
 import { useTheme as useCustomTheme } from '../contexts/ThemeContext';
 import attendanceAPI from '../services/attendanceAPI';
@@ -158,6 +159,10 @@ const Attendance = () => {
                 <EventNote sx={{ color: '#ff9800' }} />
               </ListItemIcon>
               <ListItemText primary="OD Requests" />
+            </ListItem>
+            <ListItem button onClick={() => { navigate('/event-tracker'); setDrawerOpen(false); }}>
+              <ListItemIcon><Event sx={{ color: '#ff5722' }} /></ListItemIcon>
+              <ListItemText primary="Event Tracker" />
             </ListItem>
           </List>
         </Box>

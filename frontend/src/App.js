@@ -17,6 +17,7 @@ import Attendance from "./pages/Attendance";
 import ODRequests from "./pages/ODRequests";
 import Marks from "./pages/Marks";
 import Profile from "./pages/Profile";
+import EventTracker from "./pages/EventTracker";
 import "./App.css";
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
                   <Route path="/od-requests" element={<ODRequests />} />
                   <Route path="/marks" element={<Marks />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/event-tracker" element={<EventTracker />} />
                 </Routes>
               </div>
             </Router>

@@ -89,7 +89,7 @@ const AnnouncementsList = ({ announcements = [] }) => {
                           {announcement.content}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <CalendarToday sx={{ fontSize: 14, color: '#757575' }} />
+                          <CalendarToday sx={{ fontSize: 14, color: '#fafafa' }} />
                           <Typography variant="caption" color="text.secondary" fontWeight={600}>
                             {announcement.adminId?.firstName} {announcement.adminId?.lastName}
                           </Typography>

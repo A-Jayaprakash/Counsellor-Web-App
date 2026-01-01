@@ -43,7 +43,7 @@ export const getTheme = (mode) =>
             },
             text: {
               primary: "#1a1a1a",
-              secondary: "#757575",
+              secondary: "#1a1a1a",
               disabled: "#9e9e9e",
             },
           }
@@ -120,7 +120,7 @@ export const getTheme = (mode) =>
       },
       h6: {
         fontWeight: 700,
-        color: mode === "dark" ? "#ffffff" : "#1a1a1a",
+        color: mode === "dark" ? "#ffffff" : "#ffffff",
       },
       subtitle1: {
         color: mode === "dark" ? "#ffffff" : "#1a1a1a",
@@ -132,14 +132,14 @@ export const getTheme = (mode) =>
         color: mode === "dark" ? "#e0e0e0" : "#1a1a1a",
       },
       body2: {
-        color: mode === "dark" ? "#b0b0b0" : "#757575",
+        color: mode === "dark" ? "#ffffff" : "#ffffff",
       },
       button: {
         textTransform: "none",
         fontWeight: 600,
       },
       caption: {
-        color: mode === "dark" ? "#999999" : "#757575",
+        color: mode === "dark" ? "#ffffff" : "#ffffff",
       },
     },
     shape: {
